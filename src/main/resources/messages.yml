@@ -1,0 +1,116 @@
+Prefix: '&4&lSERVER &8» &7'
+reload: 'config reloaded'
+
+chat:
+  rank:
+    has-rank: '&8[&r%luckperms_prefix%&8]&r'
+    no-rank: '&8[&7Player&8]'
+  format: '<rank> <player>&f: &r<message>'
+  hover:
+    line1: '<format>'
+    line2: ''
+    line3: '&a&lCLICK TO SEND MESSAGE!'
+  chatcolor:
+    select-color: 'Selected <color> Chatcolor!'
+
+fly:
+  enable: 'Fly enabled'
+  disable: 'Fly disabled'
+  no-perm: 'You do not have permission to run this command'
+
+gamemode:
+  survival-message: 'changed gamemode to Survival!'
+  creative-message: 'changed gamemode to Creative!'
+  spectator-message: 'changed gamemode to Spectator!'
+  adventure-message: 'changed gamemode to Adventure!'
+
+enchant:
+  invalid-level: 'Invalid level. Please provide a number.'
+  invalid-enchant: 'This enchantment does not exist!'
+  invalid-command: '/enchant <enchant> <level>'
+  invalid-item: 'You must be holding an item that can be enchanted.'
+  no-perm: 'You do not have permission to use this command.'
+  success: 'Enchanted your item with <enchant> <level>'
+
+feed:
+  fed: 'You have been fed!'
+
+fix:
+  repaired-item: 'repaired <item>'
+
+hat:
+  has-helmet: 'can''t set helmet, take off helmet!'
+  invalid-item: 'You are not holding anything!'
+  set-helmet: 'Set <item> to helmet!'
+
+heal:
+  healed: 'You have been healed!'
+  healed-by-player: 'You have been healed by <player>!'
+
+invsee:
+  invalid-command: '/invsee <player>'
+  invalid-player: 'player is not online'
+  own-inventory: 'you cant view your own inventory'
+  no-perm: 'you don''t have permission'
+
+nickname:
+  invalid-command: '/nick <nickname>'
+  nicknamed: 'nicked yourself to <nick>'
+  no-perm: 'You do not have permission to use this command.'
+
+ping:
+  invalid-player: 'player is not online!'
+  your-ping: 'Ping: <ping>'
+  target-ping: ''
+
+ptime:
+  day: 'Changed time to Day!'
+  midnight: 'Changed time to Mignight!'
+  night: 'Changed time to Night!'
+  noon: 'Changed time to Noon!'
+  reset: 'reset player time!'
+  invalid-command: '/ptime <time>'
+
+pweather:
+  clear: 'Changed time to Clear!'
+  downfall: 'Changed weather to Downfall!'
+  reset: 'reset player weather!'
+  invalid-command: '/pweather <weather>'
+
+seen:
+  player-online: 'player is online!'
+  invalid-player: '<player> has never logging in!'
+  seen-player: '<player> last logged in <time>'
+
+
+speed:
+  1: 'Changed speed to 1!'
+  2: 'Changed speed to 2!'
+  3: 'Changed speed to 3!'
+  4: 'Changed speed to 4!'
+  5: 'Changed speed to 5!'
+  reset: 'reset speed'
+  invalid-command: '/speed <speed>'
+
+top:
+  teleported: 'teleported to highest block!'
+  invalid-blocks: 'their are no blocks above you!'
+
+vanish:
+  enable: 'vanish enabled'
+  disable: 'vanish disabled'
+
+economy:
+  balance:
+    invalid-command: '/bal <player>'
+    invalid-player: 'player is not online!'
+    bal: '<balance>'
+  admin:
+    invalid-command: '/economy <action> <player> <amount>'
+    invalid-player: 'player is not online!'
+    invalid-amount: 'invalid number amount'
+    no-perm: 'you don''t have permission'
+    deposit: 'paid <player> <amount>'
+    deposit-target: 'an admin paid you <amount>'
+    withdraw: 'removed <amount> from <player>'
+    withdraw-target: 'an admin removed <amount> from <player>'
