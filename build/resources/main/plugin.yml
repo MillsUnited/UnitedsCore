@@ -1,0 +1,45 @@
+name: Something
+version: '1.0'
+main: com.mills.something.Main
+api-version: '1.21'
+commands:
+  fly:
+  heal:
+  feed:
+  ptime:
+  pweather:
+  gmc:
+  gms:
+  gmsp:
+  gma:
+  enchant:
+  message:
+    aliases:
+      - msg
+  reply:
+    aliases:
+      - r
+  craft:
+  fix:
+  speed:
+  enderchest:
+  top:
+  hat:
+  clearinventory:
+  seen:
+  ping:
+  nick:
+    aliases:
+      - nickname
+  near:
+  vanish:
+    aliases:
+      - v
+  invsee:
+  corereload:
+  chatcolor:
+  bal:
+  economy:
+depend: [Vault]
+
+
