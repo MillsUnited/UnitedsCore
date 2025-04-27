@@ -1,4 +1,4 @@
-package com.mills.something;
+package com.mills.core;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,5 +44,4 @@ public class Utills {
             return years + " year" + (years == 1 ? "" : "s") + " ago";
         }
     }
-
 }

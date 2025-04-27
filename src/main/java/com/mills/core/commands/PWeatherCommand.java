@@ -1,6 +1,6 @@
-package com.mills.something.commands;
+package com.mills.core.commands;
 
-import com.mills.something.Main;
+import com.mills.core.Main;
 import org.bukkit.WeatherType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,12 +9,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PWeatherCommand implements CommandExecutor {
-
-    private Main main;
-
-    public PWeatherCommand(Main main) {
-        this.main = main;
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -27,19 +21,19 @@ public class PWeatherCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("clear")) {
 
                     player.setPlayerWeather(WeatherType.CLEAR);
-                    player.sendMessage(main.prefix + main.getMessagesManager().getMessage("pweather.clear"));
+                    player.sendMessage(Main.prefix + "Changed time to Clear!");
 
                 } else if (args[0].equalsIgnoreCase("downfall")) {
                     player.setPlayerWeather(WeatherType.DOWNFALL);
-                    player.sendMessage(main.prefix + main.getMessagesManager().getMessage("pweather.downfall"));
+                    player.sendMessage(Main.prefix + "Changed weather to Downfall!");
 
                 } else if (args[0].equalsIgnoreCase("reset")) {
                     player.resetPlayerWeather();
-                    player.sendMessage(main.prefix + main.getMessagesManager().getMessage("pweather.reset"));
+                    player.sendMessage(Main.prefix + "reset player weather!");
                 }
 
             } else {
-                player.sendMessage(main.prefix + main.getMessagesManager().getMessage("pweather.invalid-command"));
+                player.sendMessage(Main.prefix + "/pweather <weather>");
             }
 
         }

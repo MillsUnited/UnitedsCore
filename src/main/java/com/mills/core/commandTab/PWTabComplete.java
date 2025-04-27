@@ -1,4 +1,4 @@
-package com.mills.something.commandTab;
+package com.mills.core.commandTab;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,13 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PTTabComplete implements TabCompleter {
+public class PWTabComplete implements TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (args.length == 1) {
-            return StringUtil.copyPartialMatches(args[0], Arrays.asList("day", "midnight", "night", "noon", "reset"), new ArrayList<>());
+        if (sender.hasPermission("pweather")) {
+            if (args.length == 1) {
+                return StringUtil.copyPartialMatches(args[0], Arrays.asList("clear", "downfall", "reset"), new ArrayList<>());
+            }
         }
         return new ArrayList<>();
     }

@@ -1,8 +1,7 @@
-package com.mills.something.commands;
+package com.mills.core.commands;
 
-import com.mills.something.Main;
+import com.mills.core.Main;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,17 +10,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class PingCommand implements CommandExecutor {
 
-    private Main main;
-
-    public PingCommand(Main main) {
-        this.main = main;
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
+
+            if (!player.hasPermission("server.ping")) {
+                player.sendMessage(Main.prefix + "You don't have permission to use this command!");
+                return false;
+            }
 
             int ping = player.getPing();
 
@@ -29,7 +27,7 @@ public class PingCommand implements CommandExecutor {
 
                 if (args.length == 0) {
 
-                    player.sendMessage(main.prefix + main.getMessagesManager().getMessage("ping.your-ping").replace("<ping>", Integer.toString(ping)));
+                    player.sendMessage(Main.prefix + "Ping: " + ping);
 
                     return true;
                 }
@@ -39,11 +37,10 @@ public class PingCommand implements CommandExecutor {
 
                 int targetping = target.getPing();
 
-                player.sendMessage(main.prefix + main.getMessagesManager().getMessage("ping.target-ping").replace("<target>", targetName).
-                        replace("<ping>", Integer.toString(targetping)));
+                player.sendMessage(Main.prefix + targetName + "'s ping is " + targetping);
 
             } else {
-                player.sendMessage(main.prefix + main.getMessagesManager().getMessage("ping.invalid-player"));
+                player.sendMessage(Main.prefix + "player is not online!");
             }
 
         }

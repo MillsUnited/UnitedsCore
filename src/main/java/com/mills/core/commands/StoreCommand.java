@@ -1,23 +1,22 @@
-package com.mills.something.commands.Menus;
+package com.mills.core.commands;
 
+import com.mills.core.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftCommand implements CommandExecutor {
+public class StoreCommand implements CommandExecutor {
+
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            player.openWorkbench(player.getLocation(), true);
-
+            player.sendMessage(Main.prefix + "<store>");
         }
-
-
         return false;
     }
 }
