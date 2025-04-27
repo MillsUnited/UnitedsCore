@@ -1,6 +1,6 @@
-name: Something
+name: ServerCore
 version: '1.0'
-main: com.mills.something.Main
+main: com.mills.core.Main
 api-version: '1.21'
 commands:
   fly:
@@ -13,16 +13,14 @@ commands:
   gmsp:
   gma:
   enchant:
-  message:
-    aliases:
-      - msg
-  reply:
-    aliases:
-      - r
   craft:
+    aliases:
+      - workbench
   fix:
   speed:
   enderchest:
+    aliases:
+      - echest
   top:
   hat:
   clearinventory:
@@ -32,14 +30,44 @@ commands:
     aliases:
       - nickname
   near:
-  vanish:
-    aliases:
-      - v
-  invsee:
   corereload:
   chatcolor:
   bal:
   economy:
+  store:
+  rename:
+  back:
+  setspawn:
+  spawn:
+  teleport:
+    aliases:
+      - tp
+  teleporthere:
+    aliases:
+      - tphere
+  sethome:
+  homes:
+  home:
+  movehome:
+  deletehome:
+    aliases:
+      - delhome
+  setwarp:
+  warp:
+  warps:
+  deletewarp:
+    aliases:
+      - delwarp
+  anvil:
+  offlineteleport:
+    aliases:
+      - offlinetp
+      - otp
+  playtime:
+  tpa:
+  tpaaccept:
+  tpadeny:
+  tpatoggle:
 depend: [Vault]
 
 
