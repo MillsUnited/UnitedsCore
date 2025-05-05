@@ -46,7 +46,17 @@ public class OfflinePlayerTeleportCommand implements CommandExecutor {
             Location targetLoc = offlinePlayerTeleportManager.getPlayerLocation(targetUUID);
 
             if (targetLoc == null) {
-                player.sendMessage(prefix + "That player has no saved location.");
+                player.sendMessage(prefix + "That player has no saved location!");
+                return true;
+            }
+
+            if (player.equals(target)) {
+                player.sendMessage(prefix + "you cant teleport yourself!");
+                return true;
+            }
+
+            if (target.isOnline()) {
+                player.sendMessage(prefix + "this player is online /tp " + target.getName());
                 return true;
             }
 

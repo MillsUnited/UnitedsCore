@@ -60,10 +60,8 @@ public class HomesCommand implements CommandExecutor {
                     if (targetHomeNames.isEmpty()) {
                         player.sendMessage(homesManager.prefix + target.getName() + " doesn't have any homes set.");
                     } else {
-                        player.sendMessage(homesManager.prefix + "active homes for " + target.getName());
-                        for (String home : targetHomeNames) {
-                            player.sendMessage(ChatColor.GREEN + "- " + home);
-                        }
+                        String joined = String.join(", ", targetHomeNames);
+                        player.sendMessage(homesManager.prefix + joined);
                     }
                 }
             }

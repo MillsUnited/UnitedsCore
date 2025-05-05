@@ -31,14 +31,17 @@ public class NearCommand implements CommandExecutor {
             List<String> nearbyPlayerNames = new ArrayList<>();
 
             for (Entity near : player.getWorld().getNearbyEntities(player.getLocation(), 50, 50, 50)) {
-                if (near instanceof Player nearPlayer) {
+                if (near instanceof Player nearPlayer && !nearPlayer.equals(player)) {
                     nearbyPlayerNames.add(nearPlayer.getName());
                 }
             }
 
-            builder.append(String.join(", ", nearbyPlayerNames));
-
-            player.sendMessage(builder.toString());
+            if (nearbyPlayerNames.isEmpty()) {
+                player.sendMessage(Main.prefix + "there are no players near you!");
+            } else {
+                builder.append(String.join(", ", nearbyPlayerNames));
+                player.sendMessage(builder.toString());
+            }
         }
 
         return false;

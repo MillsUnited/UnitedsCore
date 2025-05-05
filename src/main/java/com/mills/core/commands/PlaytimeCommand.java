@@ -1,6 +1,7 @@
 package com.mills.core.commands;
 
 import com.mills.core.PlaytimeUtils.PlaytimeUtils;
+import com.mills.core.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -46,7 +47,7 @@ public class PlaytimeCommand implements CommandExecutor {
             }
 
             long playtimeMili = PlaytimeUtils.getPlaytimeMilis(target);
-            String readableTime = PlaytimeUtils.formatPlaytime(playtimeMili);
+            String readableTime = Utils.formatTime(playtimeMili);
             player.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "Playtime for &6" + target.getName() + " &7is &6" + readableTime + "&7!"));
         }
         return false;

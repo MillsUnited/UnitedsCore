@@ -43,6 +43,10 @@ public class HomesManager {
         return homeamount;
     }
 
+    public List<String> getAllPlayersWithHomes() {
+        return new ArrayList<>(config.getKeys(false));
+    }
+
     public List<String> getHomeNames(UUID uuid) {
         List<String> names = new ArrayList<>();
         String path = uuid.toString();

@@ -166,25 +166,41 @@ public class ChatcolorGUI implements Listener {
 
             String colorCode = "";
             String colorName = "";
+            String colorFormat = "";
             UUID uuid = player.getUniqueId();
-            String currentStyle = chatcolorManager.getChatcolor(uuid);
 
             switch (e.getRawSlot()) {
-                case 10 -> { colorCode = "&4"; colorName = "Dark Red"; }
-                case 11 -> { colorCode = "&c"; colorName = "Red"; }
-                case 12 -> { colorCode = "&6"; colorName = "Gold"; }
-                case 13 -> { colorCode = "&e"; colorName = "Yellow"; }
-                case 14 -> { colorCode = "&2"; colorName = "Dark Green"; }
-                case 15 -> { colorCode = "&a"; colorName = "Green"; }
-                case 16 -> { colorCode = "&b"; colorName = "Aqua"; }
-                case 19 -> { colorCode = "&3"; colorName = "Dark Aqua"; }
-                case 20 -> { colorCode = "&1"; colorName = "Dark Blue"; }
-                case 21 -> { colorCode = "&9"; colorName = "Blue"; }
-                case 22 -> { colorCode = "&d"; colorName = "Pink"; }
-                case 23 -> { colorCode = "&5"; colorName = "Purple"; }
-                case 24 -> { colorCode = "&f"; colorName = "White"; }
-                case 25 -> { colorCode = "&8"; colorName = "Gray"; }
-                case 31 -> { colorCode = "&7"; colorName = "Light Gray"; }
+                case 10 -> {
+                    if (!player.hasPermission("server.chatcolor.staff")) {
+                        player.sendMessage(Main.prefix + "You don't have permission to use staff chatcolor!");
+                        return;
+                    }
+                    colorCode = "&4";
+                    colorName = "Dark Red";
+                    colorFormat = "<dark_red>";
+                }
+                case 11 -> {
+                    if (!player.hasPermission("server.chatcolor.staff")) {
+                        player.sendMessage(Main.prefix + "You don't have permission to use staff chatcolor!");
+                        return;
+                    }
+                    colorCode = "&c";
+                    colorName = "Red";
+                    colorFormat = "<red>";
+                }
+                case 12 -> { colorCode = "&6"; colorName = "Gold"; colorFormat = "<gold>"; }
+                case 13 -> { colorCode = "&e"; colorName = "Yellow"; colorFormat = "<yellow>"; }
+                case 14 -> { colorCode = "&2"; colorName = "Dark Green"; colorFormat = "<dark_green>"; }
+                case 15 -> { colorCode = "&a"; colorName = "Green"; colorFormat = "<green>"; }
+                case 16 -> { colorCode = "&b"; colorName = "Aqua"; colorFormat = "<aqua>"; }
+                case 19 -> { colorCode = "&3"; colorName = "Dark Aqua"; colorFormat = "<dark_aqua>"; }
+                case 20 -> { colorCode = "&1"; colorName = "Dark Blue"; colorFormat = "<dark_blue>"; }
+                case 21 -> { colorCode = "&9"; colorName = "Blue"; colorFormat = "<blue>"; }
+                case 22 -> { colorCode = "&d"; colorName = "Pink"; colorFormat = "<light_purple>"; }
+                case 23 -> { colorCode = "&5"; colorName = "Purple"; colorFormat = "<dark_purple>"; }
+                case 24 -> { colorCode = "&f"; colorName = "White"; colorFormat = "<white>"; }
+                case 25 -> { colorCode = "&8"; colorName = "Gray"; colorFormat = "<dark_gray>"; }
+                case 31 -> { colorCode = "&7"; colorName = "Light Gray"; colorFormat = "<gray>"; }
                 case 48 -> {
                     if (!player.hasPermission("server.chatcolor.bold")) {
                         player.sendMessage(Main.prefix + "You don't have permission to use bold chatcolor!");
@@ -223,7 +239,7 @@ public class ChatcolorGUI implements Listener {
                 default -> { return; }
             }
 
-            applyChatColor(player, colorCode);
+            applyChatColor(player, colorFormat);
 
             player.sendMessage(Main.prefix + "Selected " + ChatColor.translateAlternateColorCodes('&', colorCode + colorName) +
                     ChatColor.GRAY + " Chatcolor!");

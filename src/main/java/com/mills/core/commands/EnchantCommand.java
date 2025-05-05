@@ -1,7 +1,7 @@
 package com.mills.core.commands;
 
 import com.mills.core.Main;
-import com.mills.core.Utills;
+import com.mills.core.Utils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -121,7 +121,7 @@ public class EnchantCommand implements CommandExecutor {
 
                         if (enchantment != null) {
                             item.addUnsafeEnchantment(enchantment, enchantLevel);
-                            player.sendMessage(Main.prefix + "Enchanted your item with " + Utills.format(enchantName.toLowerCase()) + " " + enchantLevel);
+                            player.sendMessage(Main.prefix + "Enchanted your item with " + Utils.format(enchantName.toLowerCase()) + " " + enchantLevel);
                         } else {
                             player.sendMessage(Main.prefix + "This enchantment does not exist!");
                         }

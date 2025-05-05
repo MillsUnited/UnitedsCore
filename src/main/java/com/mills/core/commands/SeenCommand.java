@@ -1,7 +1,7 @@
 package com.mills.core.commands;
 
 import com.mills.core.Main;
-import com.mills.core.Utills;
+import com.mills.core.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -29,7 +29,7 @@ public class SeenCommand implements CommandExecutor {
 
                 long currentTime = System.currentTimeMillis();
                 long timeDifference = currentTime - seen;
-                String timeAgo = Utills.formatTimeAgo(timeDifference);
+                String timeAgo = Utils.formatTimeAgo(timeDifference);
 
                 if(args.length == 0) {
                     player.sendMessage(Main.prefix + timeAgo);

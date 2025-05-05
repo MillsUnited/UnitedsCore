@@ -3,6 +3,7 @@ package com.mills.core;
 import com.mills.core.commandTab.*;
 import com.mills.core.commands.*;
 import com.mills.core.commands.ClearinvCommand;
+import com.mills.core.commands.Economy.*;
 import com.mills.core.commands.Menus.*;
 import com.mills.core.commands.gamemode.*;
 import com.mills.core.commands.teleport.*;
@@ -17,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class Main extends JavaPlugin {
 
@@ -27,7 +29,8 @@ public final class Main extends JavaPlugin {
     private WarpManager warpManager;
     private HomesManager homesManager;
     private OfflinePlayerTeleportManager offlinePlayerTeleportManager;
-    public static String prefix = ChatColor.translateAlternateColorCodes('&', "&4&lSERVER &8» &7");
+    public static String prefix = ChatColor.translateAlternateColorCodes('&', "&4&lInfernalMC &8» &7");
+    public static String economyPrefix = ChatColor.translateAlternateColorCodes('&', "&e&lEconomy &8» &7");
     private static Main instance;
 
     @Override
@@ -49,6 +52,7 @@ public final class Main extends JavaPlugin {
 
         BackCommand backCommand = new BackCommand();
         SpeedCommand speedCommand = new SpeedCommand();
+        BaltopGUI baltopGUI = new BaltopGUI(this);
 
         Bukkit.getPluginManager().registerEvents(nicknameManager, this);
         Bukkit.getPluginManager().registerEvents(economyManager, this);
@@ -58,6 +62,8 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(backCommand, this);
         Bukkit.getPluginManager().registerEvents(speedCommand, this);
         Bukkit.getPluginManager().registerEvents(offlinePlayerTeleportManager, this);
+        Bukkit.getPluginManager().registerEvents(new BaltopGUI(this), this);
+        Bukkit.getPluginManager().registerEvents(balanceDataManager,  this);
 
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 
@@ -71,6 +77,12 @@ public final class Main extends JavaPlugin {
         getCommand("gms").setExecutor(new GamemodeSurvival());
         getCommand("gmsp").setExecutor(new GamemodeSpectator());
         getCommand("gma").setExecutor(new GamemodeAdventure());
+        getCommand("gamemode").setTabCompleter(new GamemodeTabComplete());
+        getCommand("gma").setTabCompleter(new GamemodeTabComplete());
+        getCommand("gmsp").setTabCompleter(new GamemodeTabComplete());
+        getCommand("gms").setTabCompleter(new GamemodeTabComplete());
+        getCommand("gmc").setTabCompleter(new GamemodeTabComplete());
+        getCommand("gamemode").setExecutor(new GamemodeCommand());
         getCommand("enchant").setExecutor(new EnchantCommand());
         getCommand("fix").setExecutor(new FixCommand());
         getCommand("speed").setExecutor(speedCommand);
@@ -115,7 +127,14 @@ public final class Main extends JavaPlugin {
         getCommand("tpaaccept").setExecutor(new TpaAcceptCommand(tpaManager));
         getCommand("tpadeny").setExecutor(new TpaDenyCommand(tpaManager));
         getCommand("tpatoggle").setExecutor(new TpaToggleCommand(tpaManager));
+        getCommand("discord").setExecutor(new DiscordCommand());
+        getCommand("baltop").setExecutor(new BaltopCommand(baltopGUI));
+        getCommand("home").setTabCompleter(new HomeTabComplete(homesManager));
+        getCommand("delhome").setTabCompleter(new HomeTabComplete(homesManager));
+        getCommand("homes").setTabCompleter(new HomeTabComplete(homesManager));
+        getCommand("warp").setTabCompleter(new WarpTabComplete(warpManager));
 
+        runTask();
     }
 
     public NicknameManager getNicknameManager() {
@@ -142,13 +161,20 @@ public final class Main extends JavaPlugin {
         getServer().getServicesManager().register(Economy.class, economyManager, this, ServicePriority.High);
     }
 
+    private void runTask() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    offlinePlayerTeleportManager.savePlayerLocation(player);
+                }
+            }
+        }.runTaskTimerAsynchronously(this, 60, 100);
+    }
+
     @Override
     public void onDisable() {
         balanceDataManager.saveConfig();
-
-//        for (Player player : Bukkit.getOnlinePlayers()) {
-//            offlinePlayerTeleportManager.savePlayerLocation(player);
-//        }
     }
 
     public HomesManager getHomesManager() {

@@ -1,7 +1,5 @@
 package com.mills.core.commands.teleport.offline;
 
-import com.mills.core.Main;
-import me.clip.placeholderapi.libs.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,9 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,16 +92,15 @@ public class OfflinePlayerTeleportManager implements Listener {
     }
 
     @EventHandler
+    public void onTeleport(PlayerTeleportEvent e) {
+        savePlayerLocation(e.getPlayer());
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
-
+        removePlayerData(uuid);
         reloadConfig();
-        Location loc = getPlayerLocation(uuid);
-
-        if (loc != null) {
-            player.teleport(loc);
-            removePlayerData(uuid);
-        }
     }
 }

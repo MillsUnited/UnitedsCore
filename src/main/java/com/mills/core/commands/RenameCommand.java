@@ -1,6 +1,7 @@
 package com.mills.core.commands;
 
 import com.mills.core.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -21,15 +22,16 @@ public class RenameCommand implements CommandExecutor {
             "MACE", "TRIDENT", "BOW", "CROSSBOW"
     ));
 
+    private final int limit = 15;
+
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player)) return true;
-
         Player player = (Player) sender;
 
         if (!player.hasPermission("server.rename")) {
-            player.sendMessage(Main.prefix + "You don't have permission to use this command!");
+            player.sendMessage(Main.prefix + ChatColor.RED + "You don't have permission to use this command!");
             return false;
         }
 
@@ -41,7 +43,7 @@ public class RenameCommand implements CommandExecutor {
         }
 
         String itemType = itemStack.getType().name();
-        boolean valid = validItems.stream().anyMatch(itemType::contains);
+        boolean valid = validItems.stream().anyMatch(validName -> itemType.endsWith(validName));
         if (!valid) {
             player.sendMessage(Main.prefix + ChatColor.RED + "You cannot rename that item.");
             return true;
@@ -52,25 +54,36 @@ public class RenameCommand implements CommandExecutor {
             return true;
         }
 
-        StringBuilder nameBuilder = new StringBuilder();
-        for (String arg : args) {
-            nameBuilder.append(arg).append(" ");
-        }
-        String name = nameBuilder.toString().trim();
-        String notBoldName = name.replace("&l", "");
+        String name = String.join(" ", args).trim();
+        String translatedName = ChatColor.translateAlternateColorCodes('&', name);
+        String visibleName = ChatColor.stripColor(translatedName);
 
-        ItemMeta meta = itemStack.getItemMeta();
-
-        if (!player.hasPermission("server.rename.bold")) {
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', notBoldName));
-            itemStack.setItemMeta(meta);
-            player.sendMessage(Main.prefix + "you renamed your item to " + ChatColor.translateAlternateColorCodes('&', notBoldName));
+        if (visibleName.isBlank()) {
+            player.sendMessage(Main.prefix + ChatColor.RED + "Name must include visible characters.");
             return true;
         }
 
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        if (visibleName.length() > limit) {
+            player.sendMessage(Main.prefix + ChatColor.RED + "Name is too long! Max " + limit + " visible characters.");
+            return true;
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) {
+            player.sendMessage(Main.prefix + ChatColor.RED + "This item cannot be renamed.");
+            return true;
+        }
+
+        if (!player.hasPermission("server.rename.bold")) {
+            String noBold = name.replace("&l", "");
+            translatedName = ChatColor.translateAlternateColorCodes('&', noBold);
+        }
+
+        meta.setDisplayName(translatedName);
         itemStack.setItemMeta(meta);
-        player.sendMessage(Main.prefix + "you renamed your item to " + ChatColor.translateAlternateColorCodes('&', name));
+        player.updateInventory();
+
+        player.sendMessage(Main.prefix + "You renamed your item to " + translatedName);
         return true;
     }
 }

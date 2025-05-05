@@ -16,7 +16,7 @@ public class PWTabComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (sender.hasPermission("pweather")) {
+        if (sender.hasPermission("server.pweather")) {
             if (args.length == 1) {
                 return StringUtil.copyPartialMatches(args[0], Arrays.asList("clear", "downfall", "reset"), new ArrayList<>());
             }

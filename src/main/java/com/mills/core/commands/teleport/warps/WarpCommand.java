@@ -33,6 +33,8 @@ public class WarpCommand implements CommandExecutor {
             }
 
             player.teleport(warp);
+            player.setFlySpeed(0.1F);
+            player.setWalkSpeed(0.2F);
             player.sendMessage(warpManager.prefix + "Teleported to warp '" + args[0] + "'!");
 
         } else {

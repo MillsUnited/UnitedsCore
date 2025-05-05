@@ -32,6 +32,12 @@ public class TeleportCommand implements CommandExecutor {
             Player player = (Player) sender;
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
+
+                if (player == target) {
+                    player.sendMessage(prefix + "you cant teleport yourself!");
+                    return true;
+                }
+
                 player.teleport(target.getLocation());
                 player.sendMessage(prefix + "Teleported to " + target.getName());
             } else {

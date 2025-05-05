@@ -1,15 +1,25 @@
 package com.mills.core;
 
 import com.mills.core.PlaytimeUtils.PlaytimeUtils;
+import com.mills.core.commands.ChatColorCommand;
+import com.mills.core.commands.Economy.BalanceDataManager;
+import com.mills.core.commands.Economy.EconomyManager;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -19,6 +29,7 @@ public class ChatManager implements Listener {
     private Main main;
     private ChatcolorManager chatcolorManager;
     private BalanceDataManager balanceDataManager;
+    private EconomyManager economyManager;
 
     private final HashMap<UUID, Long> cooldowns = new HashMap<>();
     private final long cooldownTime = 3000;
@@ -27,6 +38,7 @@ public class ChatManager implements Listener {
         this.main = main;
         this.chatcolorManager = main.getChatcolorManager();
         this.balanceDataManager = main.getBalanceDataManager();
+        this.economyManager = main.getEconomyManager();
     }
 
     @EventHandler
@@ -49,62 +61,61 @@ public class ChatManager implements Listener {
         }
 
         String playerName = e.getPlayer().getName();
-        String playerDisplay = e.getPlayer().getDisplayName();
+        String playerDisplay = ChatColor.translateAlternateColorCodes('&', e.getPlayer().getDisplayName());
         String prefix = PlaceholderAPI.setPlaceholders(e.getPlayer(), "%luckperms_prefix%");
 
         //get color
         String chatcolor = chatcolorManager.getChatcolor(uuid);
         if (chatcolor == null) chatcolor = "";
-        String formattedColor = ChatColor.translateAlternateColorCodes('&', chatcolor);
         boolean isBold = chatcolorManager.isBold(uuid);
         boolean isItalic = chatcolorManager.isItalic(uuid);
         String playerMessage = e.getMessage();
-        String ChatcolorMessage = formattedColor + (isBold ? ChatColor.BOLD : "") + (isItalic ? ChatColor.ITALIC : "") + playerMessage + ChatColor.RESET;
-        e.setMessage(ChatcolorMessage);
+        String ChatcolorMessage = (isBold ? "<bold>" : "") +
+                (isItalic ? "<italic>" : "") +
+                HexFormatter.parseHexColor(chatcolor) +
+                playerMessage +
+                "<reset>";
 
-        //format for rank/player tag
         String format;
-        if (prefix != null && !prefix.isEmpty()) {
-            format = ChatColor.translateAlternateColorCodes('&', "&8[&r%luckperms_prefix%&8]&r");
+        if (!prefix.isEmpty()) {
+            format = HexFormatter.parseHexColor(prefix);
+            format = "<dark_gray>[</dark_gray>" + format + "<reset><dark_gray>]<reset>";
         } else {
-            format = ChatColor.translateAlternateColorCodes('&', "&8[&7Player&8]&r");
+            format = "<dark_gray>[<gray>Player<dark_gray>]<reset>";
         }
 
         e.setCancelled(true);
 
+        MiniMessage mini = MiniMessage.miniMessage();
 
-        TextComponent chatformat = new TextComponent(ChatColor.translateAlternateColorCodes('&', format + " " + playerDisplay + "&f: &r" + ChatcolorMessage));
+        String displayClean = ChatColor.stripColor(playerDisplay);
+        displayClean = HexFormatter.parseHexColor(displayClean);
 
-        chatformat.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + playerName + " "));
-
-        TextComponent hoverformat = new TextComponent(ChatColor.translateAlternateColorCodes('&', format + " " + playerName + "&f: &r" + ChatcolorMessage));
+        String fullMessage = format.replace(" ", "") + " <white>" + displayClean + "</white><white>: </white>" + HexFormatter.parseHexColor(ChatcolorMessage);
+        Component chatComponent = mini.deserialize(fullMessage)
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.suggestCommand("/msg " + playerName + " "));
 
         String skyblock = PlaceholderAPI.setPlaceholders(e.getPlayer(), "%superior_island_raw_worth_format%");
+        double rawBalance = balanceDataManager.getBalance(uuid);
+        String betterBalance = rawBalance % 1 == 0 ? String.valueOf((long) rawBalance) : String.valueOf(rawBalance);
 
-        String betterBalance;
-        if ((balanceDataManager.getBalance(uuid)).toString().endsWith(".0")) {
-            betterBalance = (balanceDataManager.getBalance(uuid)).toString().replace(".0", "");
-        } else {
-            betterBalance = (balanceDataManager.getBalance(uuid)).toString();
-        }
+        String fullHoverMessage = format.replace(" ", "") + " <white>" + playerName + "</white><white>: </white>" + HexFormatter.parseHexColor(ChatcolorMessage);
 
-        String hoverMessageLine1 = hoverformat.getText();
-        String hoverMessageLine2 = "";
-        String hoverMessageLine3 = "&a&lINFO:";
-        String hoverMessageLine5 = "&a• &fBalance: &a$" + betterBalance;
-        String hoverMessageLine6 = "&a• &fPlaytime: &a" + PlaytimeUtils.formatPlaytime(PlaytimeUtils.getPlaytimeMilis(e.getPlayer()));
-        String hoverMessageLine7 = "&a• &fIsland Value: &a" + skyblock;
-        String hoverMessageLine8 = "";
-        String hoverMessageLine9 = "&a&lCLICK TO SEND MESSAGE!";
+        String hoverText = fullHoverMessage + "\n\n" +
+                "<green><bold>INFO:</bold></green>\n" +
+                "<green>•</green> <white>Balance: </white><green>" + economyManager.format(Double.parseDouble(betterBalance)) + "</green>\n" +
+                "<green>•</green> <white>Playtime: </white><green>" + Utils.formatTime(PlaytimeUtils.getPlaytimeMilis(e.getPlayer())) + "</green>\n" +
+                "<green>•</green> <white>Island Value: </white><green>" + skyblock + "</green>\n\n" +
+                "<green><bold>CLICK TO SEND MESSAGE!</bold></green>";
 
-        String combinedHover = hoverMessageLine1 + "\n" + hoverMessageLine2 + "\n" + hoverMessageLine3 + "\n" +
-                hoverMessageLine5 + "\n" + hoverMessageLine6 + "\n" + hoverMessageLine7 + "\n" + hoverMessageLine8 + "\n" + hoverMessageLine9;
-        TextComponent hoverText = new TextComponent(ChatColor.translateAlternateColorCodes('&', combinedHover));
-        chatformat.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{hoverText}));
+        Component hoverComponent = mini.deserialize(hoverText);
 
-        e.getPlayer().getServer().getOnlinePlayers().forEach(player -> player.spigot().sendMessage(chatformat));
+        chatComponent = chatComponent.hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(hoverComponent));
 
+        Bukkit.getConsoleSender().sendMessage(e.getPlayer().getName() + ": " + e.getMessage());
 
+        Component finalChatComponent = chatComponent;
+        e.getPlayer().getServer().getOnlinePlayers().forEach(player -> player.sendMessage(finalChatComponent));
     }
 
 }

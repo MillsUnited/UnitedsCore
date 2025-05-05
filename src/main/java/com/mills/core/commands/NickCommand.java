@@ -1,5 +1,6 @@
 package com.mills.core.commands;
 
+import com.mills.core.HexFormatter;
 import com.mills.core.Main;
 import com.mills.core.NicknameManager;
 import org.bukkit.ChatColor;
@@ -29,63 +30,40 @@ public class NickCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("server.nick")) {
-
-                if (args.length == 0) {
-
-                    player.sendMessage(Main.prefix + "/nick <nickname>");
-
-                    return true;
-                }
-
-
-                String nick = args[0];
-                String parsedNick = parseHexColors(nick);
-
-                String notboldnick = parsedNick.replace("&l", "");
-
-                UUID playerUUID = player.getUniqueId();
-
-                if (!player.hasPermission("server.nick.bold")) {
-
-                    if (parsedNick.contains("&l")) {
-
-                        nicknameManager.saveNickname(playerUUID, notboldnick);
-
-                        player.setDisplayName(ChatColor.translateAlternateColorCodes('&', notboldnick));
-                        player.sendMessage(Main.prefix + "nicked yourself to " + ChatColor.RED + ChatColor.translateAlternateColorCodes('&', notboldnick));
-
-                    }
-                    return true;
-                }
-
-                nicknameManager.saveNickname(playerUUID, parsedNick);
-
-                player.setDisplayName(ChatColor.translateAlternateColorCodes('&', parsedNick));
-
-                player.sendMessage(Main.prefix + "nicked yourself to " + ChatColor.RED + ChatColor.translateAlternateColorCodes('&', parsedNick));
-
-            } else {
+            if (!player.hasPermission("server.nick")) {
                 player.sendMessage(Main.prefix + "You do not have permission to use this command.");
+                return false;
             }
 
+            if (args.length == 0) {
+                player.sendMessage(Main.prefix + "/nick <nickname>");
+                return true;
+            }
+
+            String nick = args[0];
+            String parsedNick = HexFormatter.parseHexColor(nick);
+            String notboldNick = parsedNick.replace("<bold>", "");
+
+            String colorParsedNick = ChatColor.translateAlternateColorCodes('&', nick);
+            String colorNotBoldNick = colorParsedNick.replace("§l", "");
+
+            UUID playerUUID = player.getUniqueId();
+
+
+            if (!player.hasPermission("server.nick.bold")) {
+
+                nicknameManager.saveNickname(playerUUID, notboldNick);
+                player.setDisplayName(ChatColor.translateAlternateColorCodes('&', notboldNick));
+                player.sendMessage(Main.prefix + "nicked yourself to " + ChatColor.RED + colorNotBoldNick);
+
+            } else {
+
+                nicknameManager.saveNickname(playerUUID, parsedNick);
+                player.setDisplayName(ChatColor.translateAlternateColorCodes('&', parsedNick));
+                player.sendMessage(Main.prefix + "nicked yourself to " + ChatColor.RED + colorParsedNick);
+            }
         }
 
         return false;
-    }
-
-    private String parseHexColors(String input) {
-        Pattern pattern = Pattern.compile("&#([a-fA-F0-9]{6})");
-        Matcher matcher = pattern.matcher(input);
-
-        StringBuffer buffer = new StringBuffer();
-
-        while (matcher.find()) {
-            String hex = matcher.group(1);
-            String colorCode = net.md_5.bungee.api.ChatColor.of("#" + hex).toString();
-            matcher.appendReplacement(buffer, colorCode);
-        }
-        matcher.appendTail(buffer);
-        return buffer.toString();
     }
 }

@@ -15,31 +15,34 @@ public class PTimeCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("server.ptime"))
+            if (!player.hasPermission("server.ptime")) {
+                player.sendMessage(Main.prefix + "You don't have permission to use this command!");
+                return false;
+            }
 
-                if (args.length == 1) {
+            if (args.length == 1) {
 
-                    if (args[0].equalsIgnoreCase("day")) {
+                if (args[0].equalsIgnoreCase("day")) {
 
-                        player.setPlayerTime(1000, false);
-                        player.sendMessage(Main.prefix + "Changed time to Day!");
+                    player.setPlayerTime(1000, false);
+                    player.sendMessage(Main.prefix + "Changed time to Day!");
 
-                    } else if (args[0].equalsIgnoreCase("midnight")) {
-                        player.setPlayerTime(18000, false);
-                        player.sendMessage(Main.prefix + "Changed time to Mignight!");
+                } else if (args[0].equalsIgnoreCase("midnight")) {
+                    player.setPlayerTime(18000, false);
+                    player.sendMessage(Main.prefix + "Changed time to Mignight!");
 
-                    } else if (args[0].equalsIgnoreCase("night")) {
-                        player.setPlayerTime(13000, false);
-                        player.sendMessage(Main.prefix + "Changed time to Night!");
+                } else if (args[0].equalsIgnoreCase("night")) {
+                    player.setPlayerTime(13000, false);
+                    player.sendMessage(Main.prefix + "Changed time to Night!");
 
-                    } else if (args[0].equalsIgnoreCase("noon")) {
-                        player.setPlayerTime(6000, false);
-                        player.sendMessage(Main.prefix + "Changed time to Noon!");
+                } else if (args[0].equalsIgnoreCase("noon")) {
+                    player.setPlayerTime(6000, false);
+                    player.sendMessage(Main.prefix + "Changed time to Noon!");
 
-                    } else if (args[0].equalsIgnoreCase("reset")) {
-                        player.resetPlayerTime();
-                        player.sendMessage(Main.prefix + "reset player time!");
-                    }
+                } else if (args[0].equalsIgnoreCase("reset")) {
+                    player.resetPlayerTime();
+                    player.sendMessage(Main.prefix + "reset player time!");
+                }
 
             } else {
                 player.sendMessage(Main.prefix + "/ptime <time>");

@@ -1,7 +1,8 @@
 package com.mills.core.commands;
 
+import com.mills.core.CooldownManager;
 import com.mills.core.Main;
-import com.mills.core.Utills;
+import com.mills.core.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,14 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FixCommand implements CommandExecutor {
 
     private static final Set<String> REPAIRABLE_ITEMS = new HashSet<>();
+    private long cooldown = 300000;
+    private String key = "fix";
 
     static {
         REPAIRABLE_ITEMS.add("PICKAXE");
@@ -46,6 +46,14 @@ public class FixCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+
+        if (!player.hasPermission("server.cooldown.bypass")) {
+            if (CooldownManager.isOnCooldown(player, key, cooldown)) {
+                long timeLeft = CooldownManager.getTimeLeft(player, key, cooldown);
+                player.sendMessage(Main.prefix + ChatColor.RED + "You're on cooldown for " + Utils.formatTime(timeLeft));
+                return false;
+            }
+        }
 
         if (args.length == 0) {
             if (player.hasPermission("server.fix") || player.hasPermission("server.fix")) {
@@ -79,7 +87,8 @@ public class FixCommand implements CommandExecutor {
             if (meta != null && meta.hasDamage()) {
                 meta.setDamage(0);
                 item.setItemMeta(meta);
-                player.sendMessage(Main.prefix + "Repaired " + ChatColor.RED + Utills.format(item.getType()));
+                player.sendMessage(Main.prefix + "Repaired " + ChatColor.RED + Utils.format(item.getType().toString()));
+                CooldownManager.setCooldown(player, key);
             } else {
                 player.sendMessage(Main.prefix + ChatColor.RED + "This item doesn't need repairing!");
             }
@@ -103,13 +112,14 @@ public class FixCommand implements CommandExecutor {
                     if (repairedItems.length() > 0) {
                         repairedItems.append(ChatColor.GRAY).append(", ");
                     }
-                    repairedItems.append(ChatColor.RED).append(Utills.format(item.getType()));
+                    repairedItems.append(ChatColor.RED).append(Utils.format(item.getType().toString()));
                 }
             }
         }
 
         if (repairedCount > 0) {
-            player.sendMessage(Main.prefix + ChatColor.GRAY + "Repaired: " + repairedItems.toString());
+            player.sendMessage(Main.prefix + ChatColor.GRAY + "Repaired: " + repairedItems);
+            CooldownManager.setCooldown(player, key);
         } else {
             player.sendMessage(Main.prefix + ChatColor.RED + "You have no items that need repairing!");
         }

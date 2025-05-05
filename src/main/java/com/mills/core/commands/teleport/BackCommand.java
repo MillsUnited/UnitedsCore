@@ -1,6 +1,7 @@
 package com.mills.core.commands.teleport;
 
 import com.mills.core.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class BackCommand implements CommandExecutor, Listener {
 
     private final HashMap<UUID, Location> lastLocations = new HashMap<>();
+    private String prefix = ChatColor.translateAlternateColorCodes('&', "&b&lTeleport &8» &7");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -26,19 +28,19 @@ public class BackCommand implements CommandExecutor, Listener {
             UUID uuid = player.getUniqueId();
 
             if (!player.hasPermission("server.back")) {
-                player.sendMessage(Main.prefix + "You don't have permission to use this command!");
+                player.sendMessage(prefix + "You don't have permission to use this command!");
                 return false;
             }
 
             if (!lastLocations.containsKey(uuid)) {
-                player.sendMessage(Main.prefix + "You don't have a previous location to go back to.");
+                player.sendMessage(prefix + "You don't have a previous location to go back to.");
                 return true;
             }
 
             Location backlocation = lastLocations.get(uuid);
             player.teleport(backlocation);
             lastLocations.remove(uuid);
-            player.sendMessage(Main.prefix + "Teleported back to your previous location.");
+            player.sendMessage(prefix + "Teleported back to your previous location.");
 
         }
 

@@ -16,6 +16,11 @@ public class PWeatherCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
+            if (!player.hasPermission("server.pweather")) {
+                player.sendMessage(Main.prefix + "You don't have permission to use this command!");
+                return false;
+            }
+
             if (args.length == 1) {
 
                 if (args[0].equalsIgnoreCase("clear")) {

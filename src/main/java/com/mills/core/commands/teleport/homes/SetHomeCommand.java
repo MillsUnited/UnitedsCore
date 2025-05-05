@@ -47,6 +47,11 @@ public class SetHomeCommand implements CommandExecutor {
                 player.sendMessage(homesManager.prefix + "character limit reached, make your home >= 10 character limit!");
                 return true;
             }
+
+            if (homesManager.doesHomeExist(uuid, home)) {
+                player.sendMessage(homesManager.prefix + "you already have a home called " + home);
+            }
+
             double x = player.getLocation().getX();
             double y = player.getLocation().getY();
             double z = player.getLocation().getZ();
@@ -74,10 +79,10 @@ public class SetHomeCommand implements CommandExecutor {
         if (player.hasPermission("server.homes.amount.infernal") || player.hasPermission(homesManager.admin)) {
             return Integer.MAX_VALUE;
         } else if (player.hasPermission("server.homes.amount.blaze")) {
-            return 10;
+            return 15;
         } else if (player.hasPermission("server.homes.amount.ember")) {
-            return 5;
+            return 7;
         }
-        return 1;
+        return 3;
     }
 }

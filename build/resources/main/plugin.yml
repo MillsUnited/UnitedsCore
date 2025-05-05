@@ -12,6 +12,7 @@ commands:
   gms:
   gmsp:
   gma:
+  gamemode:
   enchant:
   craft:
     aliases:
@@ -68,6 +69,8 @@ commands:
   tpaaccept:
   tpadeny:
   tpatoggle:
+  discord:
+  baltop:
 depend: [Vault]
 
 

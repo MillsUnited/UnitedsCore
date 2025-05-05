@@ -1,9 +1,7 @@
 package com.mills.core.commands.teleport.homes;
 
 import com.mills.core.Main;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,8 +12,8 @@ import java.util.UUID;
 
 public class HomeCommand implements CommandExecutor {
 
-    private Main main;
-    private HomesManager homesManager;
+    private final Main main;
+    private final HomesManager homesManager;
 
     public HomeCommand(Main main) {
         this.main = main;
@@ -25,38 +23,64 @@ public class HomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            UUID uuid = player.getUniqueId();
+        if (!(sender instanceof Player)) return false;
+        Player player = (Player) sender;
 
-            if (args.length == 0) {
-                player.sendMessage(homesManager.prefix + "Usage: /home <homeName>");
-                return true;
-            }
-
+        // /home <home>
+        if (args.length == 1) {
             String home = args[0];
+            UUID uuid = player.getUniqueId();
 
             if (!homesManager.doesHomeExist(uuid, home)) {
                 player.sendMessage(homesManager.prefix + "Home does not exist!");
                 return true;
             }
 
-            double x = homesManager.getHomeX(uuid, home);
-            double y = homesManager.getHomeY(uuid, home);
-            double z = homesManager.getHomeZ(uuid, home);
-            float yaw = homesManager.getHomeYaw(uuid, home);
-            float pitch = homesManager.getHomePitch(uuid, home);
-            World world = homesManager.getHomeWorld(uuid, home);
+            teleportToHome(player, uuid, home);
+            player.sendMessage(homesManager.prefix + "Teleported to home " + home);
+            return true;
+        }
 
-            if (world == null) {
-                player.sendMessage(homesManager.prefix + "Could not find the world for home " + home);
+        // /home <player> <home>
+        if (args.length == 2 && player.hasPermission(homesManager.admin)) {
+            String targetName = args[0];
+            String home = args[1];
+
+            OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+            if (target == null || target.getName() == null) {
+                player.sendMessage(homesManager.prefix + "Player not found.");
                 return true;
             }
 
-            Location loc = new Location(world, x, y, z, yaw, pitch);
-            player.teleport(loc);
-            player.sendMessage(homesManager.prefix + "Teleported to home " + home);
+            UUID targetUUID = target.getUniqueId();
+            if (!homesManager.doesHomeExist(targetUUID, home)) {
+                player.sendMessage(homesManager.prefix + "That player does not have a home named '" + home + "'.");
+                return true;
+            }
+
+            teleportToHome(player, targetUUID, home);
+            player.sendMessage(homesManager.prefix + "Teleported to " + target.getName() + "'s home '" + home + "'.");
+            return true;
         }
-        return false;
+
+        player.sendMessage(homesManager.prefix + ChatColor.RED + "Usage: /home <homeName> or /home <player> <homeName>");
+        return true;
+    }
+
+    private void teleportToHome(Player player, UUID uuid, String home) {
+        double x = homesManager.getHomeX(uuid, home);
+        double y = homesManager.getHomeY(uuid, home);
+        double z = homesManager.getHomeZ(uuid, home);
+        float yaw = homesManager.getHomeYaw(uuid, home);
+        float pitch = homesManager.getHomePitch(uuid, home);
+        World world = homesManager.getHomeWorld(uuid, home);
+
+        if (world == null) {
+            player.sendMessage(homesManager.prefix + "World for home " + home + " not found.");
+            return;
+        }
+
+        Location loc = new Location(world, x, y, z, yaw, pitch);
+        player.teleport(loc);
     }
 }
